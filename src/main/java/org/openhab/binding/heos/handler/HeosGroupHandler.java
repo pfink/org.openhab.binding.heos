@@ -60,18 +60,16 @@ public class HeosGroupHandler extends HeosThingBaseHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, @NonNull Command command) {
-        if (command instanceof RefreshType) {
+        HeosChannelHandler channelHandler = channelHandlerFactory.getChannelHandler(channelUID);
+        if (channelHandler != null) {
+            channelHandler.handleCommand(command, gid, this, channelUID);
+        }
+        else if (command instanceof RefreshType) {
             logger.warn("REFRESH - BridgeStatus {}", this.getThing().getStatus().toString());
             if (this.getThing().getStatus().toString().equals(ONLINE)) {
                 logger.warn("Refresh for channel {}", channelUID.getAsString());
                 handleRefresh();
             }
-            return;
-        }
-        HeosChannelHandler channelHandler = channelHandlerFactory.getChannelHandler(channelUID);
-        if (channelHandler != null) {
-            channelHandler.handleCommand(command, gid, this, channelUID);
-            return;
         }
     }
 
